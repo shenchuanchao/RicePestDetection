@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我用 ASP.NET Core 给水稻做了个"看病"系统</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #ededed; font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; padding: 20px 0; }
+        .phone-frame { max-width: 414px; margin: 0 auto; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.12); }
+        .phone-header { background: #ededed; padding: 12px 16px; text-align: center; color: #888; font-size: 13px; }
+        .article-title { padding: 20px 20px 8px; font-size: 22px; font-weight: bold; line-height: 1.4; color: #1a1a1a; }
+        .article-meta { padding: 0 20px 16px; color: #999; font-size: 13px; border-bottom: 1px solid #f0f0f0; }
+        .article-body { padding: 20px; }
+        .copy-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #07c160; color: #fff; text-align: center; padding: 14px; font-size: 16px; font-weight: bold; cursor: pointer; z-index: 100; }
+        .copy-bar:hover { background: #06ad56; }
+        .copy-tip { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.75); color: #fff; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 200; }
+    </style>
+</head>
+<body>
+    <div class="phone-frame">
+        <div class="phone-header">公众号图文预览</div>
+        <div class="article-title">我用 ASP.NET Core 给水稻做了个"看病"系统</div>
+        <div class="article-meta">水稻病虫害检测 · 毕业设计实战</div>
+        <div class="article-body" id="articleBody">
+            <!-- body.html 内容注入位置 -->
+        </div>
+    </div>
+
+    <div class="copy-bar" onclick="copyArticle()">一键复制全文</div>
+    <div class="copy-tip" id="copyTip">已复制到剪贴板，粘贴到公众号编辑器即可</div>
+
+    <script>
+        // 加载 body.html 内容
+        fetch('body.html')
+            .then(r => r.text())
+            .then(html => {
+                document.getElementById('articleBody').innerHTML = html;
+            });
+
+        function copyArticle() {
+            const body = document.getElementById('articleBody');
+            const range = document.createRange();
+            range.selectNode(body);
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+            try {
+                document.execCommand('copy');
+                sel.removeAllRanges();
+                const tip = document.getElementById('copyTip');
+                tip.style.display = 'block';
+                setTimeout(() => tip.style.display = 'none', 2000);
+            } catch(e) {
+                alert('复制失败，请手动全选复制');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<p style="text-align:center;font-size:13px;letter-spacing:5px;color:#9a8c6a;margin:0 0 12px;">— 毕业设计实战 —</p>
+<p style="text-align:center;font-size:22px;font-weight:bold;color:#1a1a1a;margin:0 0 8px;line-height:1.4;">我用 ASP.NET Core 给水稻做了个"看病"系统</p>
+<p style="text-align:center;font-size:13px;color:#999;margin:0 0 32px;">上传一张叶片照片，AI 告诉你它得了什么病</p>
+
+<p style="font-size:15px;color:#333;line-height:1.85;margin:0 0 18px;">前阵子回了趟老家，正赶上水稻抽穗，发现一件挺头疼的事。</p>
+
+<p style="font-size:15px;color:#333;line-height:1.85;margin:0 0 18px;">村里谁家田里叶子出了斑点，第一反应不是找农技员——<strong>镇上的农技站本来就没几个人，下一趟田得排好几天</strong>。大家习惯找村里种了一辈子地的老农民给看看。</p>
+
+<p style="font-size:15px;color:#333;line-height:1.85;margin:0 0 18px;">但老农民的经验有两个问题。一是<strong>不一定叫得准</strong>，稻瘟和纹枯早期症状像，同一个村几个老人看法能不一样；二是<strong>人不在跟前就没辙</strong>，年轻人在外打工，视频里说不清，照片发过去老人也看不清。</p>
+
+<p style="font-size:15px;color:#333;line-height:1.85;margin:0 0 18px;">病虫害这东西，早一天识别和晚一天，产量差出去一大截。等农技员排到、等老人有空来看，可能就过了最佳防治期。</p>
+
+<p style="font-size:15px;color:#333;line-height:1.85;margin:0 0 18px;">我就想，能不能搞个东西，<strong>手机拍张照，当场就知道是什么病、该打什么药</strong>，不用求人、不用等。</p>
+
+<p style="font-size:15px;color:#333;line-height:1.85;margin:0 0 28px;">说干就干，用我最熟的 <strong style="color:#2e7d32;">.NET 技术栈</strong>搭了一套。做完之后效果比预想的好，准确率能到 94.78%。这篇把整个过程拆给你看。</p>
+
+<p style="text-align:center;font-size:52px;font-weight:900;color:#1a1a1a;letter-spacing:3px;line-height:1;margin:46px 0 0;">01</p>
+<p style="text-align:center;font-size:20px;font-weight:bold;color:#2e7d32;margin:10px 0 26px;">先把痛点想清楚</p>
+
+<p style="font-size:15px;color:#333;line-height:1.85;margin:0 0 18px;">水稻病虫害的诊断，传统路子有两个绕不开的问题。</p>
+
+<p style="font-size:15px;color:#333;line-height:1.85;margin:0 0 18px;">一是<strong>靠老农民经验</strong>。经验靠谱但不总能用上——老人不一定在跟前，不同人判断还可能打架。年轻人没那份积累，对着病叶干瞪眼。</p>
+
+<p style="font-size:15px;color:#333;line-height:1.85;margin:0 0 18px;">二是<strong>靠书靠农技员</strong>。病虫害图谱翻起来费劲，症状描述又专业，对着照片对不上号；农技站人手少，排队下田等不起。</p>
+
+<p style="font-size:15px;color:#333;line-height:1.85;margin:0 0 28px;">所以这个系统的目标很明确：<span style="background:#e8f5e9;color:#2e7d32;padding:2px 8px;border-radius:4px;font-weight:bold;">拍照 → 识别 → 给防治建议</span>，三步搞定，不需要任何专业背景。</p>
+
+<p style="text-align:center;font-size:52px;font-weight:900;color:#1a1a1a;letter-spacing:3px;line-height:1;margin:46px 0 0;">02</p>
+<p style="text-align:center;font-size:20px;font-weight:bold;color:#2e7d32;margin:10px 0 26px;">技术栈怎么选</p>
+
+<p style="font-size:15px;color:#333;line-height:1.85;margin:0 0 18px;">既然是毕业设计，我没选 Python+Flask 那条最常见的路，而是全栈用 .NET。理由很简单：<strong>一个语言贯穿前后端，调试起来省事</strong>。</p>
+
+<p style="font-size:15px;color:#333;line-height:1.85;margin:0 0 18px;">核心技术栈是这样的：</p>
+
+<p style="font-size:14px;color:#444;line-height:1.8;margin:0 0 8px;padding:12px 16px;background:#f7f7f7;border-radius:6px;"><strong style="color:#2e7d32;">后端</strong>：ASP.NET Core 8 MVC + C# 12</p>
+<p style="font-size:14px;color:#444;line-height:1.8;margin:0 0 8px;padding:12px 16px;background:#f7f7f7;border-radius:6px;"><strong style="color:#2e7d32;">数据</strong>：Entity Framework Core 8 + SQLite（Code First）</p>
+<p style="font-size:14px;color:#444;line-height:1.8;margin:0 0 8px;padding:12px 16px;background:#f7f7f7;border-radius:6px;"><strong style="color:#2e7d32;">AI 推理</strong>：ML.NET + ONNX（DenseNet121，6 类水稻病害）</p>
+<p style="font-size:14px;color:#444;line-height:1.8;margin:0 0 8px;padding:12px 16px;background:#f7f7f7;border-radius:6px;"><strong style="color:#2e7d32;">前端</strong>：Razor + Bootstrap 5 + ECharts</p>
+<p style="font-size:14px;color:#444;line-height:1.8;margin:0 0 28px;padding:12px 16px;background:#f7f7f7;border-radius:6px;"><strong style="color:#2e7d32;">认证</strong>：ASP.NET Core Identity（管理员 / 普通用户双角色）</p>
+
+<p style="font-size:15px;color:#333;line-height:1.85;margin:0 0 18px;">这里面最有意思的是 ML.NET。很多人以为 .NET 搞 AI 只能调 Python 接口，其实 ML.NET 能直接加载 ONNX 模型在进程内推理，<strong>不用起 Python 服务，部署就一个进程</strong>。</p>
+
+<p style="text-align:center;font-size:52px;font-weight:900;color:#1a1a1a;letter-spacing:3px;line-height:1;margin:46px 0 0;">03</p>
+<p style="text-align:center;font-size:20px;font-weight:bold;color:#2e7d32;margin:10px 0 26px;">模型从哪来</p>
+
+<p style="font-size:15px;color:#333;line-height:1.85;margin:0 0 18px;">自己从零训练一个模型不现实，标注数据就是个大坑。我找了 HuggingFace 上一个开源的水稻病害预训练模型，架构是 DenseNet121，在 Rice_Leaf_AUG 数据集上微调过。</p>
+
+<p style="font-size:15px;color:#333;line-height:1.85;margin:0 0 18px;">六类输出，刚好覆盖水稻最常见的叶片病害：</p>
+
+<p style="font-size:14px;color:#444;line-height:1.8;margin:0 0 6px;padding:10px 16px;background:#f7f7f7;border-left:3px solid #2e7d32;">白叶枯病、褐斑病、健康、稻瘟病、叶枯病、纹枯病</p>
+
+<p style="font-size:15px;color:#333;line-height:1.85;margin:0 0 18px;">下载下来是 PyTorch 的 .pth 权重，我用 timm 重建模型结构，再导出成 ONNX。整个过程在 CPU 上跑，没用到显卡。</p>
+
+<p style="font-size:15px;color:#333;line-height:1.85;margin:0 0 28px;">导出的 ONNX 模型输入 224×224，输出 6 维 logits。验证集准确率 <strong style="color:#c62828;">94.78%</strong>，做毕业设计够用了。</p>
+
+<p style="text-align:center;font-size:52px;font-weight:900;color:#1a1a1a;letter-spacing:3px;line-height:1;margin:46px 0 0;">04</p>
+<p style="text-align:center;font-size:20px;font-weight:bold;color:#2e7d32;margin:10px 0 26px;">推理管道怎么跑</p>
+
+<p style="font-size:15px;color:#333;line-height:1.85;margin:0 0 18px;">图片进来之后，MLPredictionService 干这么几件事：</p>
+
+<p style="font-size:14px;color:#444;line-height:1.85;margin:0 0 10px;padding-left:16px;border-left:3px solid #2e7d32;"><strong>1. 加载图片</strong>：ML.NET 的 LoadImages 转换读取本地图片</p>
+<p style="font-size:14px;color:#444;line-height:1.85;margin:0 0 10px;padding-left:16px;border-left:3px solid #2e7d32;"><strong>2. 预处理</strong>：Resize 到 224×224，ExtractPixels 提取像素并归一化</p>
+<p style="font-size:14px;color:#444;line-height:1.85;margin:0 0 10px;padding-left:16px;border-left:3px solid #2e7d32;"><strong>3. 推理</strong>：ApplyOnnxModel 加载 ONNX 模型，输出 6 维 logits</p>
+<p style="font-size:14px;color:#444;line-height:1.85;margin:0 0 10px;padding-left:16px;border-left:3px solid #2e7d32;"><strong>4. 后处理</strong>：Softmax 归一化，取置信度最高的类别</p>
+<p style="font-size:14px;color:#444;line-height:1.85;margin:0 0 28px;padding-left:16px;border-left:3px solid #2e7d32;"><strong>5. 匹配知识库</strong>：根据类别名查 Pest 表，返回症状和防治方法</p>
+
+<p style="font-size:15px;color:#333;line-height:1.85;margin:0 0 18px;">有个细节 worth 一提。模型文件可能不存在（比如部署时忘了放），我做了个<strong>降级策略</strong>：检测到模型加载失败，自动切到模拟预测模式，基于图片路径生成稳定结果。这样系统永远能跑，不会因为缺个模型文件就崩了。</p>
+
+<p style="text-align:center;font-size:52px;font-weight:900;color:#1a1a1a;letter-spacing:3px;line-height:1;margin:46px 0 0;">05</p>
+<p style="text-align:center;font-size:20px;font-weight:bold;color:#2e7d32;margin:10px 0 26px;">功能长什么样</p>
+
+<p style="font-size:15px;color:#333;line-height:1.85;margin:0 0 18px;">系统一共六大模块，我把核心的几个过一遍。</p>
+
+<p style="font-size:16px;font-weight:bold;color:#2e7d32;margin:0 0 10px;">图像检测</p>
+<p style="font-size:15px;color:#333;line-height:1.85;margin:0 0 18px;">拖拽或点击上传图片，几秒后返回病虫害名称、置信度，以及从知识库里匹配出来的防治建议。界面上还能看到各类别的概率分布。</p>
+
+<p style="font-size:16px;font-weight:bold;color:#2e7d32;margin:0 0 10px;">病虫害知识库</p>
+<p style="font-size:15px;color:#333;line-height:1.85;margin:0 0 18px;">内置了 9 种常见水稻病虫害的详细信息，包括症状、危害、防治方法。支持按类别筛选和关键词搜索。管理员可以新增和编辑。</p>
+
+<p style="font-size:16px;font-weight:bold;color:#2e7d32;margin:0 0 10px;">数据统计</p>
+<p style="font-size:15px;color:#333;line-height:1.85;margin:0 0 18px;">用 ECharts 画了近 30 天检测趋势折线图和病虫害分布饼图，一眼能看出最近哪种病高发。</p>
+
+<p style="font-size:16px;font-weight:bold;color:#2e7d32;margin:0 0 10px;">权限管理</p>
+<p style="font-size:15px;color:#333;line-height:1.85;margin:0 0 28px;">基于 Identity 做的双角色。普通用户能检测、看记录；管理员额外有用户管理、知识库维护、操作日志查看权限。</p>
+
+<p style="text-align:center;font-size:52px;font-weight:900;color:#1a1a1a;letter-spacing:3px;line-height:1;margin:46px 0 0;">06</p>
+<p style="text-align:center;font-size:20px;font-weight:bold;color:#2e7d32;margin:10px 0 26px;">踩过的坑</p>
+
+<p style="font-size:15px;color:#333;line-height:1.85;margin:0 0 18px;">开发过程中踩了几个印象比较深的坑，写出来供参考。</p>
+
+<p style="font-size:15px;color:#333;line-height:1.85;margin:0 0 18px;"><strong style="color:#c62828;">ONNX 输出维度</strong>。一开始用的是 ImageNet 预训练的 MobileNetV2，输出 1000 维，得自己映射到水稻病害标签。后来换成专门训练的 DenseNet121，输出就是 6 维，直接对得上标签，省了好多事。</p>
+
+<p style="font-size:15px;color:#333;line-height:1.85;margin:0 0 18px;"><strong style="color:#c62828;">InMemory 数据库测试</strong>。单元测试用 EF Core 的 InMemory 提供程序，自增 ID 的行为跟真实数据库不一样，硬编码 ID 会挂。改成取实际返回记录的 ID 就好了。</p>
+
+<p style="font-size:15px;color:#333;line-height:1.85;margin:0 0 18px;"><strong style="color:#c62828;">前端静态资源</strong>。Bootstrap 和 jQuery 的 CDN 偶尔加载失败，换成了本地文件兜底，确保断网也能跑。</p>
+
+<p style="font-size:15px;color:#333;line-height:1.85;margin:0 0 28px;">最后跑了一遍单元测试，26 个用例全过，核心服务层的逻辑基本覆盖到了。</p>
+
+<p style="text-align:center;font-size:52px;font-weight:900;color:#1a1a1a;letter-spacing:3px;line-height:1;margin:46px 0 0;">07</p>
+<p style="text-align:center;font-size:20px;font-weight:bold;color:#2e7d32;margin:10px 0 26px;">写在最后</p>
+
+<p style="font-size:15px;color:#333;line-height:1.85;margin:0 0 18px;">说实话，做这个项目最大的收获不是技术本身，而是<strong>把一个真实场景的问题，用自己熟悉的工具链从零到一地解决掉</strong>。</p>
+
+<p style="font-size:15px;color:#333;line-height:1.85;margin:0 0 18px;">以前总觉得 AI 推理是 Python 的地盘，做完才发现 .NET 这边生态也挺成熟。ML.NET + ONNX 的组合，让一个普通的 ASP.NET Core Web 应用也能跑深度学习模型，而且部署特别干净。</p>
+
+<p style="font-size:15px;color:#333;line-height:1.85;margin:0 0 18px;">当然，这个系统还有不少可以完善的地方。目前只覆盖了 6 类叶片病害，虫害（稻飞虱、二化螟这些）还没纳入；移动端适配也只是基础响应式，没有专门做小程序。但作为一个毕业设计的完整项目，该有的都有了。</p>
+
+<p style="text-align:center;font-size:18px;font-weight:bold;color:#2e7d32;margin:40px 0 16px;line-height:1.5;">想拿到完整源码 + ONNX 模型 + 论文草稿？</p>
+
+<p style="text-align:center;font-size:15px;color:#555;line-height:1.8;margin:0 0 10px;">私信我回复 <span style="background:#e8f5e9;color:#2e7d32;padding:3px 10px;border-radius:4px;font-weight:bold;">水稻</span></p>
+
+<p style="text-align:center;font-size:15px;color:#555;line-height:1.8;margin:0 0 10px;">即可获取项目全部源码和运行说明</p>
+
+<p style="text-align:center;font-size:13px;color:#999;line-height:1.7;margin:24px 0 0;">包含 .sln 解决方案、8 个控制器、12 个服务、26 个单元测试<br>数据库迁移脚本 + 种子数据 + Docker 部署配置<br>论文草稿 + 答辩 PPT 草稿 + 实验记录</p>
