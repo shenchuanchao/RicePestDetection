@@ -1,0 +1,41 @@
+@model Pest
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                <h3 class="mb-0">@Model.Name</h3>
+                <span class="badge @(Model.Category == "Disease" ? "bg-danger" : "bg-warning text-dark") fs-6">
+                    @(Model.Category == "Disease" ? "病害" : "虫害")
+                </span>
+            </div>
+            <div class="card-body">
+                @if (!string.IsNullOrEmpty(Model.ImagePath))
+                {
+                    <div class="text-center mb-4">
+                        <img src="@Model.ImagePath" alt="@Model.Name" class="img-fluid rounded" style="max-height: 300px;" />
+                    </div>
+                }
+                <div class="mb-3">
+                    <h5 class="text-success">症状描述</h5>
+                    <p class="text-muted">@(Model.Symptoms ?? "暂无")</p>
+                </div>
+                <div class="mb-3">
+                    <h5 class="text-warning">危害描述</h5>
+                    <p class="text-muted">@(Model.HarmDescription ?? "暂无")</p>
+                </div>
+                <div class="mb-3">
+                    <h5 class="text-primary">防治方法</h5>
+                    <p class="text-muted" style="white-space: pre-line;">@(Model.PreventionMethod ?? "暂无")</p>
+                </div>
+            </div>
+            <div class="card-footer text-center">
+                <a asp-action="Index" class="btn btn-secondary">返回列表</a>
+                <a asp-controller="Detection" asp-action="Index" class="btn btn-success">检测此类病虫害</a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,114 @@
+@model StatisticsViewModel
+@{
+    ViewData["Title"] = "数据统计";
+}
+
+<h2 class="mb-4">数据统计</h2>
+
+<div class="row text-center mb-4">
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h3 class="text-success">@Model.TotalDetections</h3>
+                <p class="text-muted mb-0">累计检测次数</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h3 class="text-primary">@Model.UserStatistics.TotalUsers</h3>
+                <p class="text-muted mb-0">注册用户数</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h3 class="text-warning">@Model.UserStatistics.ActiveUsers</h3>
+                <p class="text-muted mb-0">活跃用户数</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h3 class="text-info">@Model.TotalPests</h3>
+                <p class="text-muted mb-0">病虫害种类</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0">近30天检测趋势</h5>
+            </div>
+            <div class="card-body">
+                <div id="trendChart" style="width: 100%; height: 350px;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0">病虫害分布</h5>
+            </div>
+            <div class="card-body">
+                <div id="pieChart" style="width: 100%; height: 350px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // 检测趋势折线图
+        var trendChart = echarts.init(document.getElementById('trendChart'));
+        var trendDates = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.DetectionTrend.Keys.Select(d => d.ToString("MM-dd"))));
+        var trendValues = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.DetectionTrend.Values));
+
+        trendChart.setOption({
+            tooltip: { trigger: 'axis' },
+            xAxis: {
+                type: 'category',
+                data: trendDates,
+                axisLabel: { rotate: 45 }
+            },
+            yAxis: { type: 'value', minInterval: 1 },
+            series: [{
+                data: trendValues,
+                type: 'line',
+                smooth: true,
+                areaStyle: { color: 'rgba(46, 125, 50, 0.2)' },
+                lineStyle: { color: '#2e7d32' },
+                itemStyle: { color: '#2e7d32' }
+            }]
+        });
+
+        // 病虫害分布饼图
+        var pieChart = echarts.init(document.getElementById('pieChart'));
+        var pieData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.PestDistribution.Select(kv => new { name = kv.Key, value = kv.Value })));
+
+        pieChart.setOption({
+            tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
+            legend: { bottom: 0, type: 'scroll' },
+            series: [{
+                type: 'pie',
+                radius: ['40%', '70%'],
+                avoidLabelOverlap: false,
+                itemStyle: { borderRadius: 6, borderColor: '#fff', borderWidth: 2 },
+                label: { show: false },
+                emphasis: { label: { show: true, fontSize: 14, fontWeight: 'bold' } },
+                data: pieData.length > 0 ? pieData : [{ name: '暂无数据', value: 1 }]
+            }]
+        });
+
+        window.addEventListener('resize', function() {
+            trendChart.resize();
+            pieChart.resize();
+        });
+    </script>
+}

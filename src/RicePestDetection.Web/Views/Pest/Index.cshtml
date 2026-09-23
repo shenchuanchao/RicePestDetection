@@ -1,0 +1,71 @@
+@model List<Pest>
+@{
+    ViewData["Title"] = "病虫害知识库";
+    var category = ViewData["Category"] as string;
+    var keyword = ViewData["Keyword"] as string;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>病虫害知识库</h2>
+    @if (User.IsInRole("Admin"))
+    {
+        <a asp-action="Create" class="btn btn-success">+ 新增病虫害</a>
+    }
+</div>
+
+<form asp-action="Index" method="get" class="row g-3 mb-4">
+    <div class="col-md-3">
+        <select name="category" class="form-select">
+            <option value="">全部类别</option>
+            <option value="Disease" selected="@(category == "Disease")">病害</option>
+            <option value="Pest" selected="@(category == "Pest")">虫害</option>
+        </select>
+    </div>
+    <div class="col-md-6">
+        <input type="text" name="keyword" class="form-control" placeholder="搜索名称、症状或防治方法..." value="@keyword" />
+    </div>
+    <div class="col-md-3">
+        <button type="submit" class="btn btn-primary">搜索</button>
+        <a asp-action="Index" class="btn btn-outline-secondary">重置</a>
+    </div>
+</form>
+
+<div class="row">
+    @foreach (var pest in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                @if (!string.IsNullOrEmpty(pest.ImagePath))
+                {
+                    <img src="@pest.ImagePath" class="card-img-top" alt="@pest.Name" style="height: 200px; object-fit: cover;" />
+                }
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="card-title mb-0">@pest.Name</h5>
+                        <span class="badge @(pest.Category == "Disease" ? "bg-danger" : "bg-warning text-dark")">
+                            @(pest.Category == "Disease" ? "病害" : "虫害")
+                        </span>
+                    </div>
+                    <p class="card-text text-muted" style="font-size: 0.85rem;">
+                        @(pest.Symptoms != null && pest.Symptoms.Length > 80 ? pest.Symptoms.Substring(0, 80) + "..." : pest.Symptoms)
+                    </p>
+                    <a asp-action="Details" asp-route-id="@pest.Id" class="btn btn-sm btn-outline-success">查看详情</a>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@pest.Id" class="btn btn-sm btn-outline-primary">编辑</a>
+                        <form asp-action="Delete" asp-route-id="@pest.Id" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('确认删除该病虫害信息？')">删除</button>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="text-center text-muted py-5">
+        <p>暂无病虫害数据</p>
+    </div>
+}

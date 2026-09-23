@@ -1,0 +1,60 @@
+@model List<DetectionRecord>
+@{
+    ViewData["Title"] = "检测记录";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>检测记录</h2>
+    <a asp-controller="Detection" asp-action="Index" class="btn btn-success">+ 新建检测</a>
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="text-center text-muted py-5">
+        <p>暂无检测记录</p>
+        <a asp-controller="Detection" asp-action="Index" class="btn btn-success">开始第一次检测</a>
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>图片</th>
+                    <th>识别结果</th>
+                    <th>置信度</th>
+                    <th>检测时间</th>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <th>用户</th>
+                    }
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var record in Model)
+                {
+                    <tr>
+                        <td><img src="@record.ImagePath" alt="检测图片" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;" /></td>
+                        <td>
+                            <span class="badge @(record.ResultName == "健康" ? "bg-success" : "bg-warning text-dark")">@record.ResultName</span>
+                        </td>
+                        <td>@((record.Confidence * 100).ToString("F2"))%</td>
+                        <td>@record.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <td>@record.User?.UserName</td>
+                        }
+                        <td>
+                            <a asp-action="Details" asp-route-id="@record.Id" class="btn btn-sm btn-outline-primary">详情</a>
+                            <form asp-action="Delete" asp-route-id="@record.Id" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('确认删除该记录？')">删除</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

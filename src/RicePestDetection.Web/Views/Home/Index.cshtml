@@ -1,0 +1,67 @@
+@{
+    ViewData["Title"] = "首页";
+    var recentPests = ViewBag.RecentPests as List<RicePestDetection.Web.Models.Pest> ?? new List<RicePestDetection.Web.Models.Pest>();
+}
+
+<div class="p-5 mb-4 rounded-3 text-white hero-section" style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/images/hero-bg.jpg'); background-size: cover; background-position: center;">
+    <div class="container-fluid py-5">
+        <h1 class="display-5 fw-bold">水稻病虫害智能检测系统</h1>
+        <p class="col-md-8 fs-5 mt-3">
+            基于深度学习的水稻病虫害图像识别系统，上传水稻图片即可快速识别病虫害类型，并获取专业防治建议。
+        </p>
+        <div class="mt-4">
+            <a class="btn btn-light btn-lg" asp-controller="Detection" asp-action="Index">开始检测</a>
+            <a class="btn btn-outline-light btn-lg" asp-controller="Pest" asp-action="Index">浏览知识库</a>
+        </div>
+    </div>
+</div>
+
+<div class="row text-center mb-5">
+    <div class="col-md-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h2 class="text-success display-4">@ViewBag.TotalPests</h2>
+                <p class="text-muted">病虫害种类</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h2 class="text-primary display-4">@ViewBag.TotalDetections</h2>
+                <p class="text-muted">累计检测次数</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h2 class="text-warning display-4">8</h2>
+                <p class="text-muted">识别类别</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <h3 class="mb-4">常见病虫害</h3>
+    </div>
+    @foreach (var pest in recentPests)
+    {
+        <div class="col-md-3 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">@pest.Name</h5>
+                    <span class="badge @(pest.Category == "Disease" ? "bg-danger" : "bg-warning text-dark")">
+                        @(pest.Category == "Disease" ? "病害" : "虫害")
+                    </span>
+                    <p class="card-text text-muted mt-2" style="font-size: 0.9rem;">
+                        @(pest.Symptoms != null && pest.Symptoms.Length > 60 ? pest.Symptoms.Substring(0, 60) + "..." : pest.Symptoms)
+                    </p>
+                    <a asp-controller="Pest" asp-action="Details" asp-route-id="@pest.Id" class="btn btn-sm btn-outline-success">查看详情</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>

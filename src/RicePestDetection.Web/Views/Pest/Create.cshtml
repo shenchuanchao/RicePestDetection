@@ -1,0 +1,55 @@
+@model PestViewModel
+@{
+    ViewData["Title"] = "新增病虫害";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">新增病虫害信息</h4>
+            </div>
+            <div class="card-body">
+                <form asp-action="Create" method="post" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label"></label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Category" class="form-label"></label>
+                        <select asp-for="Category" class="form-select">
+                            <option value="">请选择类别</option>
+                            <option value="Disease">病害</option>
+                            <option value="Pest">虫害</option>
+                        </select>
+                        <span asp-validation-for="Category" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Symptoms" class="form-label"></label>
+                        <textarea asp-for="Symptoms" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="HarmDescription" class="form-label"></label>
+                        <textarea asp-for="HarmDescription" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="PreventionMethod" class="form-label"></label>
+                        <textarea asp-for="PreventionMethod" class="form-control" rows="4"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="ImageFile" class="form-label">示例图片</label>
+                        <input asp-for="ImageFile" type="file" class="form-control" accept="image/*" />
+                    </div>
+                    <button type="submit" class="btn btn-success">保存</button>
+                    <a asp-action="Index" class="btn btn-secondary">取消</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

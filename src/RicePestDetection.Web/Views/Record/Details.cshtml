@@ -1,0 +1,65 @@
+@model DetectionRecord
+@{
+    ViewData["Title"] = "检测记录详情";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">检测记录详情</h4>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h5>检测图片</h5>
+                        <img src="@Model.ImagePath" alt="检测图片" class="img-fluid rounded" />
+                    </div>
+                    <div class="col-md-6">
+                        <h5>检测信息</h5>
+                        <table class="table">
+                            <tr>
+                                <td><strong>识别结果：</strong></td>
+                                <td><span class="badge @(Model.ResultName == "健康" ? "bg-success" : "bg-warning text-dark")">@Model.ResultName</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>置信度：</strong></td>
+                                <td>@(Model.Confidence * 100).ToString("F2")%</td>
+                            </tr>
+                            <tr>
+                                <td><strong>检测时间：</strong></td>
+                                <td>@Model.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                            </tr>
+                            @if (Model.User != null)
+                            {
+                                <tr>
+                                    <td><strong>检测用户：</strong></td>
+                                    <td>@Model.User.UserName</td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+
+                @if (Model.Pest != null)
+                {
+                    <h5>病虫害详情</h5>
+                    <div class="card border-success">
+                        <div class="card-body">
+                            <h6 class="text-success">症状</h6>
+                            <p class="text-muted">@Model.Pest.Symptoms</p>
+                            <h6 class="text-warning">危害</h6>
+                            <p class="text-muted">@Model.Pest.HarmDescription</p>
+                            <h6 class="text-primary">防治方法</h6>
+                            <p class="text-muted" style="white-space: pre-line;">@Model.Pest.PreventionMethod</p>
+                        </div>
+                    </div>
+                }
+
+                <div class="mt-4">
+                    <a asp-action="Index" class="btn btn-secondary">返回列表</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

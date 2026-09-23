@@ -1,0 +1,72 @@
+@model DetectionResultViewModel
+@{
+    ViewData["Title"] = "检测结果";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">检测结果</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5 class="mb-3">上传图片</h5>
+                        <img src="@Model.ImagePath" alt="检测图片" class="img-fluid rounded" />
+                    </div>
+                    <div class="col-md-6">
+                        <h5 class="mb-3">识别结果</h5>
+                        <div class="alert @(Model.ResultName == "健康" ? "alert-success" : "alert-warning")">
+                            <h4 class="alert-heading">@Model.ResultName</h4>
+                            <p class="mb-0">置信度：@Model.ConfidencePercent</p>
+                        </div>
+                        <p class="text-muted"><small>检测时间：@Model.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")</small></p>
+                        <a asp-action="Index" class="btn btn-success">重新检测</a>
+                        <a asp-controller="Record" asp-action="Index" class="btn btn-outline-secondary">查看历史记录</a>
+                    </div>
+                </div>
+
+                @if (Model.Pest != null)
+                {
+                    <hr />
+                    <h5 class="mb-3">防治建议</h5>
+                    <div class="card border-success">
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <strong class="text-success">症状：</strong>
+                                <p class="text-muted mb-0">@Model.Pest.Symptoms</p>
+                            </div>
+                            <div class="mb-3">
+                                <strong class="text-warning">危害：</strong>
+                                <p class="text-muted mb-0">@Model.Pest.HarmDescription</p>
+                            </div>
+                            <div>
+                                <strong class="text-primary">防治方法：</strong>
+                                <p class="text-muted mb-0" style="white-space: pre-line;">@Model.Pest.PreventionMethod</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                @if (Model.Scores.Count > 0)
+                {
+                    <hr />
+                    <h5 class="mb-3">各类别置信度</h5>
+                    @foreach (var score in Model.Scores.OrderByDescending(s => s.Value).Take(5))
+                    {
+                        <div class="mb-2">
+                            <div class="d-flex justify-content-between">
+                                <span>@score.Key</span>
+                                <span>@(score.Value * 100).ToString("F2")%</span>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar bg-success" style="width: @(score.Value * 100).ToString("F2")%"></div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>

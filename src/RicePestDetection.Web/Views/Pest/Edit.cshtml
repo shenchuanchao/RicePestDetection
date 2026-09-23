@@ -1,0 +1,62 @@
+@model PestViewModel
+@{
+    ViewData["Title"] = "编辑病虫害";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">编辑病虫害信息</h4>
+            </div>
+            <div class="card-body">
+                <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="ImagePath" />
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label"></label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Category" class="form-label"></label>
+                        <select asp-for="Category" class="form-select">
+                            <option value="Disease">病害</option>
+                            <option value="Pest">虫害</option>
+                        </select>
+                        <span asp-validation-for="Category" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Symptoms" class="form-label"></label>
+                        <textarea asp-for="Symptoms" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="HarmDescription" class="form-label"></label>
+                        <textarea asp-for="HarmDescription" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="PreventionMethod" class="form-label"></label>
+                        <textarea asp-for="PreventionMethod" class="form-control" rows="4"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        @if (!string.IsNullOrEmpty(Model.ImagePath))
+                        {
+                            <div class="mb-2">
+                                <img src="@Model.ImagePath" alt="当前图片" class="img-thumbnail" style="max-height: 150px;" />
+                            </div>
+                        }
+                        <label asp-for="ImageFile" class="form-label">更换图片（选填）</label>
+                        <input asp-for="ImageFile" type="file" class="form-control" accept="image/*" />
+                    </div>
+                    <button type="submit" class="btn btn-primary">保存修改</button>
+                    <a asp-action="Index" class="btn btn-secondary">取消</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
