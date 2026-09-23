@@ -75,6 +75,14 @@ RicePestDetection/
 5. **数据统计**：检测趋势、病虫害分布图表
 6. **系统管理**：用户管理、操作日志
 
+![登录页面截图](docs/diagrams/1c84141a03161c2d167c71eecacaeb37.png)
+![首页截图](docs/diagrams/4fc4948998d4b0e7043c0ab5e27b64d4.png)
+![病虫害知识库截图](docs/diagrams/117c29c8be0f0204602363bd9747073e.png)
+![图像检测截图](docs/diagrams/5474f033be9a6c204438e5c43df1b46d.png)
+![检测记录截图](docs/diagrams/63adf0a2adde2d162c8ef844a4994f44.png)
+![用户管理截图](docs/diagrams/bee70d1b739d88cefc20b29127a9e0fa.png)
+![数据统计截图](docs/diagrams/c3a9fc4b680816f242884246954b39fa.png)
+
 ## 注意事项
 
 - ONNX 模型文件需放置在 `models/rice-pest-model.onnx`
